@@ -46,6 +46,10 @@ module Trailblazer
         contract_class.class_eval(&block)
       end
 
+      def build(*params)
+        build_operation_class(*params).new
+      end
+
 
     private
       def build_operation_class(*params)
