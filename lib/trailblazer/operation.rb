@@ -46,6 +46,10 @@ module Trailblazer
         contract_class.class_eval(&block)
       end
 
+      def build(*params)
+        build_operation_class(*params).new({}, *params)
+      end
+
 
     private
       def build_operation_class(*params)
@@ -56,10 +60,11 @@ module Trailblazer
     include Uber::Builder
 
 
-    def initialize(options={})
+    def initialize(options={}, *params)
       @valid            = true
       # DISCUSS: use reverse_merge here?
       @raise_on_invalid = options[:raise_on_invalid] || false
+      @params = *params
     end
 
     #   Operation.run(body: "Fabulous!") #=> [true, <Comment body: "Fabulous!">]
@@ -76,7 +81,12 @@ module Trailblazer
       self
     end
 
+    def process!
+      run(params)
+    end
+
     attr_reader :contract
+    attr_reader :params
 
     def valid?
       @valid
